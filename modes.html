@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Modes | Favoje Battle</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+        <nav class="topnav" aria-label="Main navigation">
+          <a href="dashboard.html" class="nav-link">Dashboard</a>
+          <a href="modes.html" class="nav-link active">Modes</a>
+          <a href="leaderboard.html" class="nav-link">Leaderboard</a>
+          <a href="tournaments.html" class="nav-link">Tournaments</a>
+        </nav>
+      </header>
+
+      <main class="page-shell narrow-shell">
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Arena</span>
+              <h2>Select your mode</h2>
+            </div>
+          </div>
+          <div class="mode-grid three-up">
+            <article class="mode-card large">
+              <div class="mode-icon"><i data-lucide="swords"></i></div>
+              <h3>1v1 Battle</h3>
+              <p>Head-to-head ranked challenge with common question sets, speed bonuses, and sudden-death tie-breaks.</p>
+              <ul class="feature-list">
+                <li>20 questions</li>
+                <li>30s per question</li>
+                <li>Ranked & private challenges</li>
+              </ul>
+              <a href="battle.html" class="primary-button full-width">Start 1v1</a>
+            </article>
+
+            <article class="mode-card large">
+              <div class="mode-icon"><i data-lucide="zap"></i></div>
+              <h3>Battle Rush</h3>
+              <p>Joint survival gameplay where incorrect answers add misses and the last competitor standing wins.</p>
+              <ul class="feature-list">
+                <li>Countdown lobbies</li>
+                <li>Course-based play</li>
+                <li>Elimination rules</li>
+              </ul>
+              <a href="battle-rush.html" class="primary-button full-width">Enter Rush</a>
+            </article>
+
+            <article class="mode-card large">
+              <div class="mode-icon"><i data-lucide="trophy"></i></div>
+              <h3>Tournament Mode</h3>
+              <p>Single elimination or league representation with verified progression and structured rewards.</p>
+              <ul class="feature-list">
+                <li>Brackets or league</li>
+                <li>Admin scheduled</li>
+                <li>Rewards & standings</li>
+              </ul>
+              <a href="tournaments.html" class="primary-button full-width">View tournaments</a>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
+

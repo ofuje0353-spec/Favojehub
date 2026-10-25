@@ -1,0 +1,158 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isApprovedUser() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() &&
+        request.auth.uid == userId &&
+        !('role' in request.resource.data diff resource.data) &&
+        !('status' in request.resource.data diff resource.data) &&
+        !('approvalHistory' in request.resource.data diff resource.data);
+      allow delete: if false;
+    }
+
+    match /usernameRegistry/{username} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && request.auth.uid != null;
+      allow delete: if false;
+    }
+
+    match /courses/{courseId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /subjects/{subjectId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /topics/{topicId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /questions/{questionId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /gameConfigurations/{configId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /matches/{matchId} {
+      allow read: if isSignedIn() && (resource.data.players[request.auth.uid] != null || isAdmin());
+      allow create: if isAdmin();
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    match /matchParticipants/{matchParticipantId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /matchAnswers/{answerId} {
+      allow read: if isSignedIn();
+      allow create: if isApprovedUser();
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    match /matchResults/{resultId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /privateRooms/{roomId} {
+      allow read: if isSignedIn();
+      allow create: if isApprovedUser();
+      allow update: if isAdmin() || resource.data.host == request.auth.uid;
+      allow delete: if isAdmin() || resource.data.host == request.auth.uid;
+    }
+
+    match /roomMemberships/{membershipId} {
+      allow read: if isSignedIn();
+      allow create: if isApprovedUser();
+      allow update: if isAdmin() || resource.data.userId == request.auth.uid || resource.data.hostId == request.auth.uid;
+      allow delete: if isAdmin() || resource.data.userId == request.auth.uid || resource.data.hostId == request.auth.uid;
+    }
+
+    match /tournaments/{tournamentId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /tournamentRegistrations/{regId} {
+      allow read: if isSignedIn();
+      allow create: if isApprovedUser();
+      allow update: if request.auth.uid == resource.data.userId || isAdmin();
+      allow delete: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isAdmin() || request.auth.uid == request.resource.data.userId;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /voicePreferences/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /voiceRooms/{roomId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /voiceSignaling/{signalId} {
+      allow read: if isSignedIn();
+      allow create: if isApprovedUser();
+      allow update: if resource.data.userId == request.auth.uid || isAdmin();
+      allow delete: if false;
+    }
+
+    match /voiceReports/{reportId} {
+      allow read: if isSignedIn() && (resource.data.reporterId == request.auth.uid || isAdmin());
+      allow create: if isApprovedUser();
+      allow update: if isAdmin() || resource.data.reporterId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /voiceRestrictions/{restrictionId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /leaderboardSnapshots/{snapshotId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /adminAuditLogs/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+  }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaderboard | Favoje Battle</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+        <nav class="topnav" aria-label="Main navigation">
+          <a href="dashboard.html" class="nav-link">Dashboard</a>
+          <a href="leaderboard.html" class="nav-link active">Leaderboard</a>
+          <a href="profile.html" class="nav-link">Profile</a>
+          <a href="settings.html" class="nav-link">Settings</a>
+        </nav>
+      </header>
+
+      <main class="page-shell">
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Verified</span>
+              <h2>Global leaderboard</h2>
+            </div>
+          </div>
+
+          <div class="leaderboard-table-wrap">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Faculty</th>
+                  <th>XP</th>
+                  <th>Accuracy</th>
+                  <th>Wins</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#1</td>
+                  <td>@AishaS</td>
+                  <td>Computer Science</td>
+                  <td>4820</td>
+                  <td>94%</td>
+                  <td>52</td>
+                </tr>
+                <tr>
+                  <td>#2</td>
+                  <td>@StanleyK</td>
+                  <td>Mechanical Engineering</td>
+                  <td>4610</td>
+                  <td>91%</td>
+                  <td>48</td>
+                </tr>
+                <tr>
+                  <td>#3</td>
+                  <td>@MusaT</td>
+                  <td>Physics</td>
+                  <td>4430</td>
+                  <td>89%</td>
+                  <td>44</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
+

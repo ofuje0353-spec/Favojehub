@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6366F1" />
+    <meta
+      name="description"
+      content="Favoje Battle is a premium academic esports platform for approved FUTMINNA students."
+    />
+    <title>Favoje Battle | FUTMINNA Academic Arena</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+
+        <nav class="topnav" aria-label="Main navigation">
+          <a href="index.html" class="nav-link active">Home</a>
+          <a href="modes.html" class="nav-link">Modes</a>
+          <a href="leaderboard.html" class="nav-link">Leaderboard</a>
+          <a href="tournaments.html" class="nav-link">Tournaments</a>
+        </nav>
+
+        <div class="top-actions">
+          <button class="ghost-button" id="themePreviewButton" type="button">Theme</button>
+          <a href="login.html" class="primary-button">Enter the Arena</a>
+        </div>
+      </header>
+
+      <main class="page-shell">
+        <section class="hero-panel">
+          <div class="hero-copy">
+            <span class="section-chip">Approved FUTMINNA Players Only</span>
+            <h2>Academic competition at esports intensity.</h2>
+            <p>
+              Test your knowledge, outplay rivals in real time, and rise through the
+              verified FUTMINNA rankings. Favoje Battle blends elite gaming presentation
+              with secure academic competition.
+            </p>
+            <div class="hero-actions">
+              <a href="register.html" class="primary-button large">Enter the Arena</a>
+              <a href="modes.html" class="secondary-button large">Explore Game Modes</a>
+            </div>
+            <div class="hero-meta">
+              <div>
+                <strong>3</strong>
+                <span>Core modes</span>
+              </div>
+              <div>
+                <strong>14</strong>
+                <span>Themes</span>
+              </div>
+              <div>
+                <strong>24/7</strong>
+                <span>Verified rankings</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Arena visual">
+            <div class="arena-card">
+              <div class="arena-header">
+                <span class="status-dot success"></span>
+                Match Control
+              </div>
+              <div class="arena-scoreboard">
+                <div>
+                  <span>Player 1</span>
+                  <strong>2860</strong>
+                </div>
+                <div class="separator">vs</div>
+                <div>
+                  <span>Player 2</span>
+                  <strong>2790</strong>
+                </div>
+              </div>
+              <div class="battle-preview">
+                <div class="question-box">
+                  <span>Question</span>
+                  <strong>Which law defines the relationship between electric field and charge density?</strong>
+                </div>
+                <div class="answer-row">
+                  <button type="button">Gauss's Law</button>
+                  <button type="button">Faraday's Law</button>
+                  <button type="button">Ohm's Law</button>
+                  <button type="button">Newton's Law</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mode-grid three-up">
+          <article class="mode-card">
+            <div class="mode-icon"><i data-lucide="swords"></i></div>
+            <h3>1v1 Battle</h3>
+            <p>Ranked head-to-head academic duels with common question sets, timer validation, and sudden-death tiebreaks.</p>
+            <a href="battle.html" class="text-link">Open mode</a>
+          </article>
+
+          <article class="mode-card">
+            <div class="mode-icon"><i data-lucide="zap"></i></div>
+            <h3>Battle Rush</h3>
+            <p>Survival-based elimination play where every miss matters and the last player standing wins.</p>
+            <a href="battle-rush.html" class="text-link">Open mode</a>
+          </article>
+
+          <article class="mode-card">
+            <div class="mode-icon"><i data-lucide="trophy"></i></div>
+            <h3>Tournament Mode</h3>
+            <p>Structured brackets, adaptive progression, and verified player advancement through competition.</p>
+            <a href="tournaments.html" class="text-link">Open mode</a>
+          </article>
+        </section>
+
+        <section class="content-row">
+          <div class="panel leaderboard-panel">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Verified rankings</span>
+                <h3>Top 5 players</h3>
+              </div>
+              <a href="leaderboard.html" class="text-link">View full leaderboard</a>
+            </div>
+
+            <div class="leaderboard-list">
+              <div class="leaderboard-item">
+                <span class="rank-pill gold">#1</span>
+                <div>
+                  <strong>@AishaS</strong>
+                  <small>Computer Science</small>
+                </div>
+                <span>4,820 XP</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank-pill silver">#2</span>
+                <div>
+                  <strong>@StanleyK</strong>
+                  <small>Mechanical Engineering</small>
+                </div>
+                <span>4,610 XP</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank-pill bronze">#3</span>
+                <div>
+                  <strong>@MusaT</strong>
+                  <small>Physics</small>
+                </div>
+                <span>4,430 XP</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank-pill neutral">#4</span>
+                <div>
+                  <strong>@ZainabY</strong>
+                  <small>Electrical Engineering</small>
+                </div>
+                <span>4,150 XP</span>
+              </div>
+              <div class="leaderboard-item">
+                <span class="rank-pill neutral">#5</span>
+                <div>
+                  <strong>@JohnP</strong>
+                  <small>Mathematics</small>
+                </div>
+                <span>4,080 XP</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel announcements-panel">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Admin updates</span>
+                <h3>Announcements</h3>
+              </div>
+            </div>
+
+            <div class="announcement-list">
+              <div class="announcement-item">
+                <span class="announcement-tag info">Info</span>
+                <div>
+                  <strong>Battle Rush trials reopen</strong>
+                  <small>Wednesday, 4:00 PM</small>
+                </div>
+              </div>
+              <div class="announcement-item">
+                <span class="announcement-tag success">Security</span>
+                <div>
+                  <strong>Account approval standards updated</strong>
+                  <small>Verified by administrators</small>
+                </div>
+              </div>
+              <div class="announcement-item">
+                <span class="announcement-tag warning">Notice</span>
+                <div>
+                  <strong>New tournament registration window open</strong>
+                  <small>Eligibility checks enforced</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel tournaments-panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Schedule</span>
+              <h3>Upcoming tournaments</h3>
+            </div>
+            <a href="tournaments.html" class="text-link">Browse all</a>
+          </div>
+
+          <div class="tournament-grid">
+            <div class="tournament-card">
+              <span class="pill accent">Registered</span>
+              <h4>FUTMINNA Open Circuit</h4>
+              <p>Single elimination / 96 players / Physics and Engineering stream</p>
+              <small>Starts: 12 Nov 2026</small>
+            </div>
+            <div class="tournament-card">
+              <span class="pill success">Open</span>
+              <h4>Faculty Clash Finals</h4>
+              <p>Faculty-based battle division / course-based brackets</p>
+              <small>Starts: 18 Nov 2026</small>
+            </div>
+            <div class="tournament-card">
+              <span class="pill warning">Preview</span>
+              <h4>Battle Rush Invitational</h4>
+              <p>Survival showcase / verified players / restricted entry</p>
+              <small>Starts: 25 Nov 2026</small>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div>
+          <strong>Favoje Battle</strong>
+          <p>Premium academic gameplay for approved FUTMINNA students.</p>
+        </div>
+        <div class="footer-links">
+          <a href="index.html">Privacy</a>
+          <a href="index.html">Rules</a>
+          <a href="index.html">Support</a>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings | Favoje Battle</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+        <nav class="topnav" aria-label="Main navigation">
+          <a href="dashboard.html" class="nav-link">Dashboard</a>
+          <a href="settings.html" class="nav-link active">Settings</a>
+          <a href="voice-settings.html" class="nav-link">Voice</a>
+        </nav>
+      </header>
+
+      <main class="page-shell narrow-shell">
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Preferences</span>
+              <h2>Player settings</h2>
+            </div>
+          </div>
+
+          <div class="settings-list">
+            <div class="setting-item">
+              <div>
+                <strong>Theme</strong>
+                <small>Choose your preferred appearance and default settings.</small>
+              </div>
+              <button id="themeSettingsButton" type="button" class="secondary-button">Open theme gallery</button>
+            </div>
+            <div class="setting-item">
+              <div>
+                <strong>Privacy</strong>
+                <small>Control profile visibility and personal data exposure.</small>
+              </div>
+              <label class="switch"><input type="checkbox" checked /><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+              <div>
+                <strong>Accessibility</strong>
+                <small>Reduce motion, improve contrast, and enhance readability.</small>
+              </div>
+              <label class="switch"><input type="checkbox" checked /><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+              <div>
+                <strong>Notification preferences</strong>
+                <small>Match reminders, rewards, and tournament updates.</small>
+              </div>
+              <button type="button" class="secondary-button">Manage alerts</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
+

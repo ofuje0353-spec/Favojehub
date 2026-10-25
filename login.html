@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Favoje Battle</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="auth-layout">
+      <div class="auth-panel glass-panel">
+        <div class="brand-group compact">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+
+        <div class="auth-header">
+          <h2>Welcome back</h2>
+          <p>Sign in to access your approved player dashboard.</p>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <label>
+            <span>Email or username</span>
+            <input type="text" id="loginIdentifier" placeholder="student@futminna.edu.ng or @username" required />
+          </label>
+
+          <label>
+            <span>Password</span>
+            <div class="password-wrap">
+              <input type="password" id="loginPassword" placeholder="Enter your password" required />
+              <button class="icon-button" type="button" data-action="toggle-password">Show</button>
+            </div>
+          </label>
+
+          <div class="form-row compact-row">
+            <label class="checkbox-inline">
+              <input type="checkbox" id="rememberMe" />
+              <span>Keep me signed in</span>
+            </label>
+            <a href="#" class="text-link">Forgot password?</a>
+          </div>
+
+          <button class="primary-button full-width" type="submit">Login</button>
+        </form>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <div class="auth-actions">
+          <a href="register.html" class="secondary-button full-width">Create account</a>
+          <a href="index.html" class="ghost-button full-width">Back to home</a>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
+

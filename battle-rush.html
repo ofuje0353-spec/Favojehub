@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Battle Rush | Favoje Battle</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+        <nav class="topnav" aria-label="Main navigation">
+          <a href="dashboard.html" class="nav-link">Dashboard</a>
+          <a href="battle.html" class="nav-link">1v1</a>
+          <a href="battle-rush.html" class="nav-link active">Rush</a>
+          <a href="tournaments.html" class="nav-link">Tournaments</a>
+        </nav>
+      </header>
+
+      <main class="page-shell battle-shell">
+        <section class="panel battle-panel">
+          <div class="battle-header">
+            <div>
+              <span class="eyebrow">Mode: Survival</span>
+              <h2>Battle Rush</h2>
+            </div>
+            <div class="timer-badge danger">
+              <span>Time left</span>
+              <strong id="rushTimer">00:45</strong>
+            </div>
+          </div>
+
+          <div class="rush-layout">
+            <div class="question-card">
+              <p class="question-label">Stage 2 • 8 players remaining</p>
+              <h3>Which process is responsible for the transport of oxygen from the lungs to body tissues?</h3>
+              <div class="answer-grid">
+                <button type="button" class="answer-choice">Diffusion</button>
+                <button type="button" class="answer-choice">Osmosis</button>
+                <button type="button" class="answer-choice">Transpiration</button>
+                <button type="button" class="answer-choice">Photosynthesis</button>
+              </div>
+            </div>
+
+            <aside class="lobby-card panel-sm">
+              <h3>Survivors</h3>
+              <ul class="player-list">
+                <li><span>@You</span><span>0 misses</span></li>
+                <li><span>@Nneka</span><span>1 miss</span></li>
+                <li><span>@Jamiu</span><span>1 miss</span></li>
+                <li><span>@Zain</span><span>2 misses</span></li>
+              </ul>
+            </aside>
+          </div>
+
+          <div class="combat-actions">
+            <button type="button" class="secondary-button">Leave match</button>
+            <button type="button" class="primary-button">Submit answer</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
+

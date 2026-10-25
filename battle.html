@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>1v1 Battle | Favoje Battle</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+        <nav class="topnav" aria-label="Main navigation">
+          <a href="dashboard.html" class="nav-link">Dashboard</a>
+          <a href="battle.html" class="nav-link active">1v1</a>
+          <a href="battle-rush.html" class="nav-link">Rush</a>
+          <a href="tournaments.html" class="nav-link">Tournaments</a>
+        </nav>
+      </header>
+
+      <main class="page-shell battle-shell">
+        <section class="panel battle-panel">
+          <div class="battle-header">
+            <div>
+              <span class="eyebrow">Mode: Ranked</span>
+              <h2>1v1 Battle</h2>
+            </div>
+            <div class="timer-badge">
+              <span>Round timer</span>
+              <strong id="battleTimer">00:30</strong>
+            </div>
+          </div>
+
+          <div class="battle-stage">
+            <div class="question-card">
+              <span class="status-dot warning"></span>
+              <p class="question-label">Question 4 / 20</p>
+              <h3>Which concept is most directly associated with the law of conservation of energy?</h3>
+              <div class="answer-grid">
+                <button type="button" class="answer-choice">Potential energy</button>
+                <button type="button" class="answer-choice">Thermal energy</button>
+                <button type="button" class="answer-choice">Energy continuity</button>
+                <button type="button" class="answer-choice">Force balance</button>
+              </div>
+            </div>
+
+            <aside class="player-grid">
+              <div class="score-card">
+                <span>You</span>
+                <strong>1860</strong>
+                <small>Accuracy 87%</small>
+              </div>
+              <div class="score-card alt">
+                <span>Opponent</span>
+                <strong>1740</strong>
+                <small>Accuracy 81%</small>
+              </div>
+            </aside>
+          </div>
+
+          <div class="combat-actions">
+            <button type="button" class="secondary-button">Leave match</button>
+            <button type="button" class="primary-button">Submit answer</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
+
