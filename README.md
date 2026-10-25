@@ -1,58 +1,36 @@
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    function isSignedIn() {
-      return request.auth != null;
+{
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "matches",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "leaderboardSnapshots",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "generatedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "voiceReports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
     }
-
-    function isApprovedUser() {
-      return isSignedIn() &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
-    }
-
-    function isAdmin() {
-      return isSignedIn() &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isSignedIn() && request.auth.uid == userId && resource.data.status != 'approved';
-      allow delete: if false;
-    }
-
-    match /matches/{matchId} {
-      allow read: if isSignedIn();
-      allow create: if isApprovedUser();
-      allow update: if isAdmin() || request.auth.uid in resource.data.participants;
-      allow delete: if false;
-    }
-
-    match /tournaments/{tournamentId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /privateRooms/{roomId} {
-      allow read: if isSignedIn();
-      allow create: if isApprovedUser();
-      allow update: if isAdmin() || resource.data.hostId == request.auth.uid;
-      allow delete: if isAdmin() || resource.data.hostId == request.auth.uid;
-    }
-
-    match /voiceReports/{reportId} {
-      allow read: if isAdmin() || resource.data.reporterId == request.auth.uid;
-      allow create: if isApprovedUser();
-      allow update: if isAdmin();
-      allow delete: if false;
-    }
-
-    match /leaderboardSnapshots/{snapshotId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-  }
+  ],
+  "fieldOverrides": []
 }

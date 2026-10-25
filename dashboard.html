@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | Favoje Battle</title>
-    <link rel="manifest" href="manifest.json" />
-    <link rel="stylesheet" href="css/styles.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Admin Overview | Favoje Battle</title>
+    <link rel="manifest" href="../manifest.json" />
+    <link rel="stylesheet" href="../css/styles.css" />
   </head>
-  <body>
+  <body data-page="admin">
     <div class="app-shell">
       <header class="topbar">
         <div class="brand-group">
@@ -18,165 +17,109 @@
             <h1>Favoje Battle</h1>
           </div>
         </div>
-
         <nav class="topnav" aria-label="Main navigation">
-          <a href="dashboard.html" class="nav-link active">Dashboard</a>
-          <a href="battle.html" class="nav-link">1v1</a>
-          <a href="battle-rush.html" class="nav-link">Rush</a>
-          <a href="tournaments.html" class="nav-link">Tournaments</a>
+          <a href="../dashboard.html" class="nav-link">Dashboard</a>
+          <a href="overview.html" class="nav-link active">Admin</a>
+          <a href="theme-manager.html" class="nav-link">Themes</a>
         </nav>
-
-        <div class="top-actions">
-          <button class="ghost-button" type="button" id="themePreviewButton">Theme</button>
-          <button class="secondary-button" type="button" id="logoutButton">Logout</button>
-        </div>
       </header>
 
-      <main class="page-shell dashboard-layout">
-        <aside class="sidebar-panel panel">
-          <h3>Player Overview</h3>
-          <div class="status-card accent-card">
-            <span class="eyebrow">Status</span>
-            <strong id="accountStatus">Pending Review</strong>
+      <main class="page-shell">
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Administration</span>
+              <h2>Control centre</h2>
+            </div>
+            <button type="button" class="primary-button">Export audit log</button>
           </div>
 
-          <ul class="menu-list">
-            <li><a href="dashboard.html">Dashboard</a></li>
-            <li><a href="modes.html">Modes</a></li>
-            <li><a href="leaderboard.html">Leaderboard</a></li>
-            <li><a href="history.html">Match History</a></li>
-            <li><a href="notifications.html">Notifications</a></li>
-            <li><a href="settings.html">Settings</a></li>
-            <li><a href="profile.html">Profile</a></li>
-            <li><a href="admin/overview.html">Admin Panel</a></li>
-          </ul>
-        </aside>
+          <div class="stats-grid four-up">
+            <article class="stat-card">
+              <span class="eyebrow">Approved</span>
+              <strong>1480</strong>
+              <small>Verified players</small>
+            </article>
+            <article class="stat-card">
+              <span class="eyebrow">Pending approval</span>
+              <strong>92</strong>
+              <small>Awaiting review</small>
+            </article>
+            <article class="stat-card">
+              <span class="eyebrow">Active matches</span>
+              <strong>18</strong>
+              <small>Across all modes</small>
+            </article>
+            <article class="stat-card">
+              <span class="eyebrow">Open reports</span>
+              <strong>6</strong>
+              <small>Voice and match moderation</small>
+            </article>
+          </div>
+        </section>
 
-        <div class="main-column">
-          <section class="stats-grid" aria-label="Player statistics">
-            <article class="stat-card">
-              <span class="eyebrow">Global rank</span>
-              <strong id="playerRank">--</strong>
-              <small>Verified leaderboard</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">Battles won</span>
-              <strong id="battlesWon">0</strong>
-              <small>Competitive wins</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">XP</span>
-              <strong id="playerXp">0</strong>
-              <small>Progression points</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">Accuracy</span>
-              <strong id="accuracyRate">0%</strong>
-              <small>Correct answers</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">Daily streak</span>
-              <strong id="dailyStreak">0</strong>
-              <small>Days active</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">Private room</span>
-              <strong>Ready</strong>
-              <small>Host & join flow</small>
-            </article>
-          </section>
-
-          <section class="mode-grid three-up">
-            <article class="mode-card">
-              <div class="mode-icon"><i data-lucide="swords"></i></div>
-              <h3>1v1 Battle</h3>
-              <p>Ranked, private, and friend challenge access.</p>
-              <a href="battle.html" class="primary-button compact-button">Join queue</a>
-            </article>
-            <article class="mode-card">
-              <div class="mode-icon"><i data-lucide="zap"></i></div>
-              <h3>Battle Rush</h3>
-              <p>Rapid community survival battle with elimination rules.</p>
-              <a href="battle-rush.html" class="primary-button compact-button">Enter lobby</a>
-            </article>
-            <article class="mode-card">
-              <div class="mode-icon"><i data-lucide="trophy"></i></div>
-              <h3>Tournament Mode</h3>
-              <p>Verified brackets, rewards, and progression tracking.</p>
-              <a href="tournaments.html" class="primary-button compact-button">View events</a>
-            </article>
-          </section>
-
-          <section class="content-row">
-            <div class="panel">
-              <div class="section-heading">
-                <div>
-                  <span class="eyebrow">Rankings</span>
-                  <h3>Leaderboard preview</h3>
-                </div>
-                <a href="leaderboard.html" class="text-link">View all</a>
-              </div>
-              <div class="leaderboard-list compact-list">
-                <div class="leaderboard-item"><span class="rank-pill gold">#1</span><div><strong>@AishaS</strong><small>CS</small></div><span>4,820 XP</span></div>
-                <div class="leaderboard-item"><span class="rank-pill silver">#2</span><div><strong>@StanleyK</strong><small>ME</small></div><span>4,610 XP</span></div>
-                <div class="leaderboard-item"><span class="rank-pill bronze">#3</span><div><strong>@MusaT</strong><small>PHY</small></div><span>4,430 XP</span></div>
-              </div>
-            </div>
-
-            <div class="panel">
-              <div class="section-heading">
-                <div>
-                  <span class="eyebrow">Important</span>
-                  <h3>Announcements</h3>
-                </div>
-              </div>
-              <div class="announcement-list compact-list">
-                <div class="announcement-item"><span class="announcement-tag success">Live</span><div><strong>Lobby reopened</strong><small>Battle Rush queue active</small></div></div>
-                <div class="announcement-item"><span class="announcement-tag info">Info</span><div><strong>New rules updated</strong><small>Approval and replay validation</small></div></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="panel">
+        <section class="content-row">
+          <div class="panel">
             <div class="section-heading">
               <div>
-                <span class="eyebrow">Recent</span>
-                <h3>Recent activity</h3>
-              </div>
-              <a href="history.html" class="text-link">Full history</a>
-            </div>
-            <div class="activity-list">
-              <div class="activity-item">
-                <span class="activity-pill success">Win</span>
-                <div>
-                  <strong>1v1 ranked victory</strong>
-                  <small>vs @DanielB • 14 minutes ago</small>
-                </div>
-              </div>
-              <div class="activity-item">
-                <span class="activity-pill info">XP</span>
-                <div>
-                  <strong>Battle Rush reward claimed</strong>
-                  <small>+120 XP • 1 hour ago</small>
-                </div>
-              </div>
-              <div class="activity-item">
-                <span class="activity-pill warning">Notice</span>
-                <div>
-                  <strong>Voice settings updated</strong>
-                  <small>Push-to-talk mode enabled • 2 hours ago</small>
-                </div>
+                <span class="eyebrow">Review queue</span>
+                <h3>Pending approvals</h3>
               </div>
             </div>
-          </section>
-        </div>
+            <div class="notification-list">
+              <div class="notification-item">
+                <div>
+                  <strong>@SamuelM</strong>
+                  <p>Mechanical Engineering • 200 Level</p>
+                </div>
+                <button type="button" class="secondary-button">Review</button>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>@NnekaD</strong>
+                  <p>Computer Science • 300 Level</p>
+                </div>
+                <button type="button" class="secondary-button">Review</button>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>@PaulC</strong>
+                  <p>Physics • 400 Level</p>
+                </div>
+                <button type="button" class="secondary-button">Review</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Moderation</span>
+                <h3>Recent actions</h3>
+              </div>
+            </div>
+            <div class="history-list">
+              <div class="history-item">
+                <strong>Match result validated</strong>
+                <span>1v1 finals</span>
+                <small>2h ago</small>
+              </div>
+              <div class="history-item">
+                <strong>Voice warning issued</strong>
+                <span>Room #AW-12</span>
+                <small>4h ago</small>
+              </div>
+              <div class="history-item">
+                <strong>Player approval confirmed</strong>
+                <span>@AishaS</span>
+                <small>Today</small>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
-    <script type="module" src="js/app.js"></script>
-    <script>
-      lucide.createIcons();
-    </script>
+    <script type="module" src="../js/app.js"></script>
   </body>
 </html>
-

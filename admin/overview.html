@@ -1,93 +1,15 @@
-import { ThemeManager } from './theme-manager.js';
-
-const themeManager = new ThemeManager();
-
-themeManager.initialize();
-
-const loginForm = document.getElementById('loginForm');
-if (loginForm) {
-  loginForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const identifier = document.getElementById('loginIdentifier')?.value?.trim() || '';
-    const password = document.getElementById('loginPassword')?.value || '';
-
-    if (!identifier || !password) {
-      alert('Enter your FUTMINNA student email or username and password.');
-      return;
-    }
-
-    alert('Authentication is intentionally disabled in this scaffold until Firebase Auth and approval logic are configured for production use.');
-  });
-}
-
-const registerForm = document.getElementById('registerForm');
-if (registerForm) {
-  registerForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const required = [
-      'fullName',
-      'username',
-      'email',
-      'matricNumber',
-      'faculty',
-      'department',
-      'password',
-      'confirmPassword'
-    ];
-
-    const missing = required.some((key) => !(document.getElementById(key)?.value || '').trim());
-    if (missing) {
-      alert('Complete all required registration details before submission.');
-      return;
-    }
-
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    if (password !== confirmPassword) {
-      alert('Passwords do not match.');
-      return;
-    }
-
-    if (!document.getElementById('termsAccepted')?.checked) {
-      alert('You must agree to the approval and access policy.');
-      return;
-    }
-
-    alert('Registration request captured. Approval and account activation are controlled by backend logic and admin verification.');
-  });
-}
-
-document.querySelectorAll('[data-action="toggle-password"]').forEach((button) => {
-  button.addEventListener('click', () => {
-    const field = button.parentElement.querySelector('input');
-    if (!field) return;
-    field.type = field.type === 'password' ? 'text' : 'password';
-    button.textContent = field.type === 'password' ? 'Show' : 'Hide';
-  });
-});
-
-const dashboardStatus = document.getElementById('accountStatus');
-if (dashboardStatus) {
-  dashboardStatus.textContent = 'Approved Player';
-}
-
-const dashboardFields = {
-  playerRank: '#24',
-  battlesWon: '18',
-  playerXp: '2680',
-  accuracyRate: '92%',
-  dailyStreak: '9',
+export const firebaseConfig = {
+  apiKey: 'YOUR_API_KEY',
+  authDomain: 'YOUR_PROJECT.firebaseapp.com',
+  projectId: 'YOUR_PROJECT_ID',
+  storageBucket: 'YOUR_PROJECT.firebasestorage.app',
+  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+  appId: 'YOUR_APP_ID'
 };
 
-Object.entries(dashboardFields).forEach(([id, value]) => {
-  const node = document.getElementById(id);
-  if (node) node.textContent = value;
-});
+export const appMeta = {
+  name: 'Favoje Battle',
+  description: 'Secure academic esports platform for approved FUTMINNA students.'
+};
 
-const logoutButton = document.getElementById('logoutButton');
-if (logoutButton) {
-  logoutButton.addEventListener('click', () => {
-    window.location.href = 'login.html';
-  });
-}
+export default firebaseConfig;

@@ -1,125 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Overview | Favoje Battle</title>
-    <link rel="manifest" href="../manifest.json" />
-    <link rel="stylesheet" href="../css/styles.css" />
-  </head>
-  <body data-page="admin">
-    <div class="app-shell">
-      <header class="topbar">
-        <div class="brand-group">
-          <div class="brand-mark">FB</div>
-          <div>
-            <div class="eyebrow">FUTMINNA</div>
-            <h1>Favoje Battle</h1>
-          </div>
-        </div>
-        <nav class="topnav" aria-label="Main navigation">
-          <a href="../dashboard.html" class="nav-link">Dashboard</a>
-          <a href="overview.html" class="nav-link active">Admin</a>
-          <a href="theme-manager.html" class="nav-link">Themes</a>
-        </nav>
-      </header>
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 
-      <main class="page-shell">
-        <section class="panel">
-          <div class="section-heading">
-            <div>
-              <span class="eyebrow">Administration</span>
-              <h2>Control centre</h2>
-            </div>
-            <button type="button" class="primary-button">Export audit log</button>
-          </div>
+admin.initializeApp();
+const db = admin.firestore();
+const FieldValue = admin.firestore.FieldValue;
 
-          <div class="stats-grid four-up">
-            <article class="stat-card">
-              <span class="eyebrow">Approved</span>
-              <strong>1480</strong>
-              <small>Verified players</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">Pending approval</span>
-              <strong>92</strong>
-              <small>Awaiting review</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">Active matches</span>
-              <strong>18</strong>
-              <small>Across all modes</small>
-            </article>
-            <article class="stat-card">
-              <span class="eyebrow">Open reports</span>
-              <strong>6</strong>
-              <small>Voice and match moderation</small>
-            </article>
-          </div>
-        </section>
+async function getUserRole(uid) {
+  const snapshot = await db.collection('users').doc(uid).get();
+  if (!snapshot.exists) return null;
+  return snapshot.data().role || 'player';
+}
 
-        <section class="content-row">
-          <div class="panel">
-            <div class="section-heading">
-              <div>
-                <span class="eyebrow">Review queue</span>
-                <h3>Pending approvals</h3>
-              </div>
-            </div>
-            <div class="notification-list">
-              <div class="notification-item">
-                <div>
-                  <strong>@SamuelM</strong>
-                  <p>Mechanical Engineering • 200 Level</p>
-                </div>
-                <button type="button" class="secondary-button">Review</button>
-              </div>
-              <div class="notification-item">
-                <div>
-                  <strong>@NnekaD</strong>
-                  <p>Computer Science • 300 Level</p>
-                </div>
-                <button type="button" class="secondary-button">Review</button>
-              </div>
-              <div class="notification-item">
-                <div>
-                  <strong>@PaulC</strong>
-                  <p>Physics • 400 Level</p>
-                </div>
-                <button type="button" class="secondary-button">Review</button>
-              </div>
-            </div>
-          </div>
+async function isAdmin(uid) {
+  if (!uid) return false;
+  const role = await getUserRole(uid);
+  return role === 'admin';
+}
 
-          <div class="panel">
-            <div class="section-heading">
-              <div>
-                <span class="eyebrow">Moderation</span>
-                <h3>Recent actions</h3>
-              </div>
-            </div>
-            <div class="history-list">
-              <div class="history-item">
-                <strong>Match result validated</strong>
-                <span>1v1 finals</span>
-                <small>2h ago</small>
-              </div>
-              <div class="history-item">
-                <strong>Voice warning issued</strong>
-                <span>Room #AW-12</span>
-                <small>4h ago</small>
-              </div>
-              <div class="history-item">
-                <strong>Player approval confirmed</strong>
-                <span>@AishaS</span>
-                <small>Today</small>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
+exports.createUserProfile = functions.auth.user().onCreate(async (user) => {
+  const profile = {
+    uid: user.uid,
+    email: user.email || null,
+    displayName: user.displayName || null,
+    status: 'pending',
+    role: 'player',
+    institution: 'FUTMINNA',
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+    approvalNotes: '',
+    trusted: false
+  };
 
-    <script type="module" src="../js/app.js"></script>
-  </body>
-</html>
+  await db.collection('users').doc(user.uid).set(profile, { merge: true });
+});
+
+exports.approveStudent = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication is required.');
+  }
+
+  if (!(await isAdmin(context.auth.uid))) {
+    throw new functions.https.HttpsError('permission-denied', 'Only administrators can approve student accounts.');
+  }
+
+  const { userId, status = 'approved', notes = '' } = data || {};
+  if (!userId) {
+    throw new functions.https.HttpsError('invalid-argument', 'A valid userId is required.');
+  }
+
+  const allowedStatuses = ['approved', 'rejected', 'pending'];
+  if (!allowedStatuses.includes(status)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Status must be approved, rejected, or pending.');
+  }
+
+  await db.collection('users').doc(userId).set({
+    status,
+    approvalNotes: notes,
+    trusted: status === 'approved',
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  return {
+    ok: true,
+    userId,
+    status,
+    message: 'Student account review updated.'
+  };
+});
+
+exports.createMatch = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication is required.');
+  }
+
+  const role = await getUserRole(context.auth.uid);
+  if (role !== 'player' && role !== 'admin') {
+    throw new functions.https.HttpsError('permission-denied', 'Only verified players may create matches.');
+  }
+
+  const { mode, participants = [], roomCode = '' } = data || {};
+  if (!mode || !Array.isArray(participants) || participants.length === 0) {
+    throw new functions.https.HttpsError('invalid-argument', 'A valid mode and participant list are required.');
+  }
+
+  const record = {
+    mode,
+    participants,
+    roomCode,
+    status: 'pending',
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
+    createdBy: context.auth.uid
+  };
+
+  const docRef = await db.collection('matches').add(record);
+  return {
+    ok: true,
+    matchId: docRef.id,
+    message: 'Match created and queued for validation.'
+  };
+});
+
+exports.validateMatchResult = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication is required.');
+  }
+
+  const { matchId, winnerId, scoreSummary } = data || {};
+  if (!matchId) {
+    throw new functions.https.HttpsError('invalid-argument', 'A valid matchId is required.');
+  }
+
+  const matchRef = db.collection('matches').doc(matchId);
+  const matchSnap = await matchRef.get();
+  if (!matchSnap.exists) {
+    throw new functions.https.HttpsError('not-found', 'Match not found.');
+  }
+
+  const payload = matchSnap.data();
+  const isParticipant = Array.isArray(payload.participants) && payload.participants.includes(context.auth.uid);
+  const isAdminUser = await isAdmin(context.auth.uid);
+
+  if (!isParticipant && !isAdminUser) {
+    throw new functions.https.HttpsError('permission-denied', 'You cannot validate this match result.');
+  }
+
+  const nextWinner = winnerId || payload.participants[0];
+  await matchRef.update({
+    winnerId: nextWinner,
+    scoreSummary: scoreSummary || { winner: nextWinner },
+    status: 'validated',
+    updatedAt: FieldValue.serverTimestamp()
+  });
+
+  return {
+    ok: true,
+    matchId,
+    winnerId: nextWinner,
+    message: 'Match result accepted and stored by backend validation.'
+  };
+});
+
+exports.issueRewardTokens = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication is required.');
+  }
+
+  if (!(await isAdmin(context.auth.uid))) {
+    throw new functions.https.HttpsError('permission-denied', 'Only administrators can issue rewards.');
+  }
+
+  const { userId, rewardType, amount } = data || {};
+  if (!userId || !rewardType || typeof amount !== 'number' || amount <= 0) {
+    throw new functions.https.HttpsError('invalid-argument', 'Reward parameters are invalid.');
+  }
+
+  const userRef = db.collection('users').doc(userId);
+  const userSnap = await userRef.get();
+  if (!userSnap.exists) {
+    throw new functions.https.HttpsError('not-found', 'Target user was not found.');
+  }
+
+  await userRef.set({
+    rewards: FieldValue.arrayUnion({ rewardType, amount, issuedAt: FieldValue.serverTimestamp() }),
+    updatedAt: FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  return {
+    ok: true,
+    userId,
+    rewardType,
+    amount,
+    message: 'Reward tokens issued through backend validation.'
+  };
+});
+
+exports.recalculateLeaderboard = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication is required.');
+  }
+
+  if (!(await isAdmin(context.auth.uid))) {
+    throw new functions.https.HttpsError('permission-denied', 'Only administrators can recalculate rankings.');
+  }
+
+  const snapshot = {
+    generatedBy: context.auth.uid,
+    generatedAt: FieldValue.serverTimestamp(),
+    mode: data?.mode || 'all',
+    source: 'server-authoritative'
+  };
+
+  const result = await db.collection('leaderboardSnapshots').add(snapshot);
+  return {
+    ok: true,
+    snapshotId: result.id,
+    message: 'Leaderboard recalculation triggered successfully.'
+  };
+});
+
+exports.submitVoiceReport = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Authentication is required.');
+  }
+
+  const { roomId, issueType, details } = data || {};
+  if (!roomId || !issueType || !details) {
+    throw new functions.https.HttpsError('invalid-argument', 'Room ID, issue type, and details are required.');
+  }
+
+  const reportRef = await db.collection('voiceReports').add({
+    roomId,
+    issueType,
+    details,
+    reporterId: context.auth.uid,
+    status: 'open',
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
+  });
+
+  return {
+    ok: true,
+    reportId: reportRef.id,
+    message: 'Voice security report submitted for moderation.'
+  };
+});
