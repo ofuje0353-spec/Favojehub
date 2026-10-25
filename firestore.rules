@@ -1,158 +1,125 @@
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    function isSignedIn() {
-      return request.auth != null;
-    }
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Overview | Favoje Battle</title>
+    <link rel="manifest" href="../manifest.json" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body data-page="admin">
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-mark">FB</div>
+          <div>
+            <div class="eyebrow">FUTMINNA</div>
+            <h1>Favoje Battle</h1>
+          </div>
+        </div>
+        <nav class="topnav" aria-label="Main navigation">
+          <a href="../dashboard.html" class="nav-link">Dashboard</a>
+          <a href="overview.html" class="nav-link active">Admin</a>
+          <a href="theme-manager.html" class="nav-link">Themes</a>
+        </nav>
+      </header>
 
-    function isApprovedUser() {
-      return isSignedIn() &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
-    }
+      <main class="page-shell">
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Administration</span>
+              <h2>Control centre</h2>
+            </div>
+            <button type="button" class="primary-button">Export audit log</button>
+          </div>
 
-    function isAdmin() {
-      return isSignedIn() &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
+          <div class="stats-grid four-up">
+            <article class="stat-card">
+              <span class="eyebrow">Approved</span>
+              <strong>1480</strong>
+              <small>Verified players</small>
+            </article>
+            <article class="stat-card">
+              <span class="eyebrow">Pending approval</span>
+              <strong>92</strong>
+              <small>Awaiting review</small>
+            </article>
+            <article class="stat-card">
+              <span class="eyebrow">Active matches</span>
+              <strong>18</strong>
+              <small>Across all modes</small>
+            </article>
+            <article class="stat-card">
+              <span class="eyebrow">Open reports</span>
+              <strong>6</strong>
+              <small>Voice and match moderation</small>
+            </article>
+          </div>
+        </section>
 
-    match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isSignedIn() &&
-        request.auth.uid == userId &&
-        !('role' in request.resource.data diff resource.data) &&
-        !('status' in request.resource.data diff resource.data) &&
-        !('approvalHistory' in request.resource.data diff resource.data);
-      allow delete: if false;
-    }
+        <section class="content-row">
+          <div class="panel">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Review queue</span>
+                <h3>Pending approvals</h3>
+              </div>
+            </div>
+            <div class="notification-list">
+              <div class="notification-item">
+                <div>
+                  <strong>@SamuelM</strong>
+                  <p>Mechanical Engineering • 200 Level</p>
+                </div>
+                <button type="button" class="secondary-button">Review</button>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>@NnekaD</strong>
+                  <p>Computer Science • 300 Level</p>
+                </div>
+                <button type="button" class="secondary-button">Review</button>
+              </div>
+              <div class="notification-item">
+                <div>
+                  <strong>@PaulC</strong>
+                  <p>Physics • 400 Level</p>
+                </div>
+                <button type="button" class="secondary-button">Review</button>
+              </div>
+            </div>
+          </div>
 
-    match /usernameRegistry/{username} {
-      allow read: if true;
-      allow create, update: if isSignedIn() && request.auth.uid != null;
-      allow delete: if false;
-    }
+          <div class="panel">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Moderation</span>
+                <h3>Recent actions</h3>
+              </div>
+            </div>
+            <div class="history-list">
+              <div class="history-item">
+                <strong>Match result validated</strong>
+                <span>1v1 finals</span>
+                <small>2h ago</small>
+              </div>
+              <div class="history-item">
+                <strong>Voice warning issued</strong>
+                <span>Room #AW-12</span>
+                <small>4h ago</small>
+              </div>
+              <div class="history-item">
+                <strong>Player approval confirmed</strong>
+                <span>@AishaS</span>
+                <small>Today</small>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
 
-    match /courses/{courseId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /subjects/{subjectId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /topics/{topicId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /questions/{questionId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /gameConfigurations/{configId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /matches/{matchId} {
-      allow read: if isSignedIn() && (resource.data.players[request.auth.uid] != null || isAdmin());
-      allow create: if isAdmin();
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    match /matchParticipants/{matchParticipantId} {
-      allow read: if isSignedIn();
-      allow write: if false;
-    }
-
-    match /matchAnswers/{answerId} {
-      allow read: if isSignedIn();
-      allow create: if isApprovedUser();
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    match /matchResults/{resultId} {
-      allow read: if isSignedIn();
-      allow write: if false;
-    }
-
-    match /privateRooms/{roomId} {
-      allow read: if isSignedIn();
-      allow create: if isApprovedUser();
-      allow update: if isAdmin() || resource.data.host == request.auth.uid;
-      allow delete: if isAdmin() || resource.data.host == request.auth.uid;
-    }
-
-    match /roomMemberships/{membershipId} {
-      allow read: if isSignedIn();
-      allow create: if isApprovedUser();
-      allow update: if isAdmin() || resource.data.userId == request.auth.uid || resource.data.hostId == request.auth.uid;
-      allow delete: if isAdmin() || resource.data.userId == request.auth.uid || resource.data.hostId == request.auth.uid;
-    }
-
-    match /tournaments/{tournamentId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /tournamentRegistrations/{regId} {
-      allow read: if isSignedIn();
-      allow create: if isApprovedUser();
-      allow update: if request.auth.uid == resource.data.userId || isAdmin();
-      allow delete: if false;
-    }
-
-    match /notifications/{notificationId} {
-      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create: if isAdmin() || request.auth.uid == request.resource.data.userId;
-      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow delete: if false;
-    }
-
-    match /voicePreferences/{userId} {
-      allow read: if isSignedIn() && request.auth.uid == userId;
-      allow write: if isSignedIn() && request.auth.uid == userId;
-    }
-
-    match /voiceRooms/{roomId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /voiceSignaling/{signalId} {
-      allow read: if isSignedIn();
-      allow create: if isApprovedUser();
-      allow update: if resource.data.userId == request.auth.uid || isAdmin();
-      allow delete: if false;
-    }
-
-    match /voiceReports/{reportId} {
-      allow read: if isSignedIn() && (resource.data.reporterId == request.auth.uid || isAdmin());
-      allow create: if isApprovedUser();
-      allow update: if isAdmin() || resource.data.reporterId == request.auth.uid;
-      allow delete: if false;
-    }
-
-    match /voiceRestrictions/{restrictionId} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
-    }
-
-    match /leaderboardSnapshots/{snapshotId} {
-      allow read: if isSignedIn();
-      allow write: if false;
-    }
-
-    match /adminAuditLogs/{docId} {
-      allow read: if isAdmin();
-      allow write: if false;
-    }
-  }
-}
+    <script type="module" src="../js/app.js"></script>
+  </body>
+</html>
