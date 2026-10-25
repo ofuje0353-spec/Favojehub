@@ -1,95 +1,64 @@
 # Favoje Battle
 
-Favoje Battle is a mobile-first, premium academic esports platform for approved FUTMINNA students. This repository is a production-oriented starter implementation that includes the application shell, Firebase-ready architecture, theme system, PWA configuration, secure security rules, and the expected project structure for the full platform.
+A secure, mobile-first, installable academic esports platform for approved FUTMINNA students.
 
-## Project structure
+This repository now functions as a secure architecture scaffold for the production platform. It intentionally avoids demo data and fabricated competitive records. Real player and match data must be created and verified through Firebase and trusted backend operations only.
 
-- `index.html` — landing page
-- `login.html` — email/username login
-- `register.html` — student registration
-- `dashboard.html` — player dashboard
-- `modes.html` — competition modes
-- `battle.html` — 1v1 battle
-- `battle-rush.html` — Battle Rush
-- `tournaments.html` — tournament browser
-- `private-room.html` — private room lobby
-- `voice-settings.html` — voice controls
-- `leaderboard.html` — rankings
-- `profile.html` — player profile
-- `history.html` — match and tournament history
-- `notifications.html` — notifications centre
-- `settings.html` — settings
-- `admin/` — admin pages
-- `css/` — styles and theme system
-- `js/` — app modules and Firebase integration
-- `functions/` — Cloud Functions backend
-- `firestore.rules` — Firestore Security Rules
-- `firestore.indexes.json` — Firestore indexes
-- `manifest.json` — PWA web app manifest
-- `service-worker.js` — cached shell
+## Current status
 
-## Features implemented in this starter
+This scaffold includes:
 
-- Premium landing page and navigation shell
-- Mobile-first responsive layout
-- 14 theme system with Light/Dark variants
-- Firebase configuration module with real project values provided by the project owner
-- PWA manifest and service worker shell
-- Login/register UI flows and validation structure
-- Dashboard, leaderboard, settings, notifications, and admin pages
-- Firestore security rules and index definitions
-- Cloud Functions skeleton for trusted backend operations
-- Theme persistence, loading states, and empty states
-- Accessibility basics, focus styles, and reduced motion handling
+- production-oriented page structure and route organization
+- mobile-first design shell with shared styling tokens
+- 14 themes with light/dark variants and instant theme switching
+- Firebase-ready configuration module
+- Firestore security rule template and indexes
+- Cloud Functions starter structure
+- PWA manifest and service worker skeleton
+- admin and player layout shells
+- accessibility and reduced-motion support
 
-## Important note
+## Non-goals for this scaffold
 
-This project intentionally does not include fake records, fabricated tournament results, or simulated competitive data. The app shell is designed for real Firebase-backed data and server validation.
+This repository does not claim to provide complete live gameplay, real matchmaking, verified tournament results, real leaderboard data, or production voice signaling without a configured Firebase project and backend deployment.
 
-## Firebase setup
+## Architecture
 
-1. Copy the Firebase web configuration from the repo's `js/firebase-config.js`.
-2. Create a Firebase project.
-3. Enable Authentication, Firestore, Cloud Functions, App Check, and Hosting.
-4. Add the authorized domains for your deployment.
-5. Configure `firestore.rules` and `firestore.indexes.json` in the Firebase Console.
-6. Deploy Cloud Functions from `functions/`.
-7. Set up WebRTC signaling and TURN infrastructure as required for real voice rooms.
+- Frontend pages live in the repository root and `admin/` directory.
+- Shared styling is in `css/styles.css`.
+- Application logic is in `js/`.
+- Firebase config is in `js/firebase-config.js`.
+- Security and database requirements are in `firestore.rules` and `firestore.indexes.json`.
+- Trusted server logic is in `functions/index.js`.
+- PWA shell is configured via `manifest.json` and `service-worker.js`.
 
-## Firestore Rules
+## Required production setup
 
-Production-oriented rules are included in `firestore.rules` and are intentionally strict by default. They require auth, approval checks for competitive operations, and administrative access for privileged writes.
+Before enabling authentication, matchmaking, score validation, or real competitive operations, complete the following external setup:
 
-## Cloud Functions
+1. Create or connect your Firebase project.
+2. Enable Firebase Authentication.
+3. Enable Cloud Firestore.
+4. Enable Cloud Functions.
+5. Enable App Check.
+6. Configure Hosting.
+7. Configure WebRTC signaling and TURN infrastructure.
+8. Deploy `firestore.rules` and `firestore.indexes.json`.
+9. Deploy `functions/index.js`.
+10. Add approved institutional student access rules and admin permissions.
 
-The starter includes `functions/index.js` with example structured exports for:
+## Firebase configuration
 
-- user profile creation
-- admin moderation operations
-- match result validation
-- reward issuance
-- leaderboard recalculation
+Use the values in `js/firebase-config.js` as the starting configuration placeholder only. Replace the placeholders with your actual Firebase web app settings before production deployment.
 
-These must be hardened with transactions, idempotency, and validation before production use.
+## Security reminders
 
-## PWA setup
+- Never put service-account keys or private credentials in frontend code.
+- Do not trust front-end values for admin permissions, match scoring, reward issuance, or leaderboard changes.
+- Use server timestamps, transactions, idempotency, and backend validation for all competitive operations.
+- Voice data must stay live-only; never record or store audio.
 
-The app includes:
-
-- `manifest.json`
-- `service-worker.js`
-- icons can be added under `assets/` and referenced from the manifest
-
-## WebRTC and voice guidance
-
-- WebRTC is used for live voice only.
-- No voice recording, replay, or storage is permitted.
-- Use Firebase signaling and TURN for real-world connectivity.
-- Keep TURN credentials server-side and never ship them in client code.
-
-## Local preview
-
-You can serve the static site locally with any lightweight web server, for example:
+## Local run
 
 ```bash
 python -m http.server 8080
@@ -101,21 +70,6 @@ Then open:
 http://localhost:8080/
 ```
 
-## Deployment
-
-Use Firebase Hosting for the static application shell, and deploy the Cloud Functions for server-side logic. Detailed deployment steps are provided in the project docs and should be adapted to your Firebase project settings.
-
-## Security reminders
-
-- Never place service-account keys, TURN secrets, or private credentials in client files.
-- Do not trust front-end state for admin permissions, match scoring, reward issuance, or ranking changes.
-- Use server timestamps, validation, transactions, and idempotency keys for all competitive operations.
-
 ## Known limitations
 
-This repository is a structured implementation and secure architecture scaffold. Full real-time gameplay, voice signaling, matchmaking, and admin moderation are backend-dependent and require a configured Firebase project, cloud functions, and production data rules.
-
-## License
-
-This project is provided as a starter implementation for the requested platform and should be adapted to your Firebase project configuration and institutional requirements.
-
+The current repository is a secure implementation scaffold. Live production gameplay and moderation require backend operations, Firebase project configuration, real data, and institutional approval workflows.
