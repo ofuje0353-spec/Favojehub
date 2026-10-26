@@ -1,74 +1,597 @@
-# Favoje Battle
+:root {
+  --bg-page: #080b14;
+  --bg-panel: rgba(17, 24, 39, 0.9);
+  --bg-surface: #1b2333;
+  --surface-strong: #1f2937;
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --primary: #6366f1;
+  --secondary: #4f46e5;
+  --accent: #f97316;
+  --success: #10b981;
+  --danger: #ef4444;
+  --border: rgba(148, 163, 184, 0.22);
+  --shadow-soft: rgba(6, 10, 24, 0.5);
+  --bg-overlay: rgba(15, 23, 42, 0.74);
+  --text-inverse: #ffffff;
+  --focus-ring: rgba(99, 102, 241, 0.55);
+}
 
-Favoje Battle is a mobile-first, premium academic esports platform for approved FUTMINNA students. This repository is a production-oriented starter implementation designed to evolve into a Firebase-backed competitive platform.
+body[data-appearance="light"] {
+  --bg-page: #f3f7ff;
+  --bg-panel: rgba(255, 255, 255, 0.82);
+  --bg-surface: #eef3ff;
+  --surface-strong: #e5edff;
+  --text-main: #0f172a;
+  --text-muted: #4b5563;
+  --primary: #4f46e5;
+  --secondary: #4338ca;
+  --accent: #ea580c;
+  --success: #10b981;
+  --danger: #ef4444;
+  --border: rgba(15, 23, 42, 0.1);
+  --shadow-soft: rgba(15, 23, 42, 0.12);
+  --bg-overlay: rgba(15, 23, 42, 0.45);
+  --text-inverse: #ffffff;
+  --focus-ring: rgba(79, 70, 229, 0.2);
+  color-scheme: light;
+}
 
-## Project status
+body[data-appearance="dark"] {
+  color-scheme: dark;
+}
 
-The app now includes:
+* {
+  box-sizing: border-box;
+}
 
-- premium landing layout and navigation shell
-- mobile-first dashboard and auth flow
-- theme system with light/dark selection and persistence
-- admin oversight screens for student approvals and moderation
-- Firebase-ready backend scaffolds for user profile creation, match validation, rewards, and leaderboard recalculation
-- Firestore security rules and index templates
-- Cloud Functions starter implementation for trusted server-side logic
-- PWA manifest and shell configuration
+html {
+  scroll-behavior: smooth;
+}
 
-## Architecture
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(99, 102, 241, 0.2), transparent 28%),
+    var(--bg-page);
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
 
-The frontend is intentionally non-authoritative. All live competitive decisions are expected to be enforced by backend systems:
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-- Authentication: Firebase Auth
-- Authorization: Firestore + Cloud Functions
-- User approval: admin-only review flow
-- Match validation: trusted backend function
-- Rewards and rankings: server-side updates only
-- Voice rooms: secure signaling and TURN infrastructure behind server controls
+img {
+  display: block;
+  max-width: 100%;
+}
 
-## Security and compliance
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 
-This codebase is built around these principles:
+button {
+  cursor: pointer;
+}
 
-- no client-side trust for scoring, rewards, promotions, or admin actions
-- no service-account keys or secret tokens in browser files
-- approval gating required before competitive access
-- admin moderation and voice abuse reporting remain server-authoritative
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
 
-## Firebase setup
+.app-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
 
-1. Create a Firebase project.
-2. Enable Authentication, Firestore, Cloud Functions, App Check, and Hosting.
-3. Configure your app using the Firebase config in `js/firebase-config.js`.
-4. Deploy `firestore.rules` and the indexes in `firestore.indexes.json`.
-5. Deploy the functions in `functions/`.
-6. Configure authorized domains and URL restrictions for your hosting setup.
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 22px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(17, 24, 39, 0.74);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 44px var(--shadow-soft);
+}
 
-## Cloud Functions
+body[data-appearance="light"] .topbar {
+  background: rgba(255, 255, 255, 0.8);
+}
 
-The starter includes backend operations for:
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 
-- user profile creation
-- student approval workflows
-- match validation
-- reward issuance
-- leaderboard recalculation
-- voice report handling
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: var(--text-inverse);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.38);
+}
 
-These functions must be hardened with validation, logging, and transaction boundaries before production use.
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 4px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
 
-## Local preview
+.topbar h1,
+.auth-header h2,
+.section-heading h2,
+.section-heading h3 {
+  letter-spacing: -0.04em;
+}
 
-```bash
-python -m http.server 8080
-```
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-Then open:
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  transition: 0.2s ease;
+}
 
-```text
-http://localhost:8080/
-```
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text-main);
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.08);
+}
 
-## Important note
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-This repository intentionally does not ship fabricated tournament data, fake match results, or simulated ranking records. The app is designed as a secure scaffold for live, Firebase-backed data and real institutional approval logic.
+.primary-button,
+.secondary-button,
+.ghost-button,
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover,
+.icon-button:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--text-inverse);
+  box-shadow: 0 16px 26px rgba(99, 102, 241, 0.22);
+}
+
+.secondary-button {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-main);
+  border-color: rgba(99, 102, 241, 0.28);
+}
+
+.ghost-button {
+  background: transparent;
+  color: var(--text-main);
+  border-color: var(--border);
+}
+
+.icon-button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--text-main);
+  border-color: transparent;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.page-shell {
+  margin-top: 28px;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 26px;
+}
+
+.panel,
+.sidebar-panel,
+.auth-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 18px 44px var(--shadow-soft);
+}
+
+.sidebar-panel,
+.panel {
+  padding: 20px;
+}
+
+.sidebar-panel h3 {
+  margin-bottom: 18px;
+  font-size: 1.25rem;
+}
+
+.status-card {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--border);
+}
+
+.accent-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(249, 115, 22, 0.12));
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 22px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.menu-list a {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: 0.2s ease;
+}
+
+.menu-list a:hover,
+.menu-list a.active {
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--text-main);
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.stats-grid.four-up {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stat-card {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.34), rgba(17, 24, 39, 0.12));
+}
+
+body[data-appearance="light"] .stat-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(238, 243, 255, 0.92));
+}
+
+.stat-card strong {
+  font-size: clamp(1.7rem, 2vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+}
+
+.stat-card small {
+  color: var(--text-muted);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.content-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+  margin-top: 24px;
+}
+
+.notification-list,
+.history-list {
+  display: grid;
+  gap: 14px;
+}
+
+.notification-item,
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(148, 163, 184, 0.04);
+}
+
+.notification-item p {
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.history-item {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.history-item span,
+.history-item small {
+  color: var(--text-muted);
+}
+
+.auth-layout {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 36px 18px 52px;
+}
+
+.auth-panel {
+  width: min(100%, 480px);
+  padding: 30px 28px;
+}
+
+.glass-panel {
+  background: rgba(17, 24, 39, 0.82);
+  backdrop-filter: blur(14px);
+}
+
+body[data-appearance="light"] .glass-panel {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.auth-header {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.auth-header p {
+  color: var(--text-muted);
+}
+
+.auth-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.auth-form span {
+  color: var(--text-main);
+}
+
+.auth-form input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.28);
+  color: var(--text-main);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body[data-appearance="light"] .auth-form input {
+  background: rgba(148, 163, 184, 0.06);
+}
+
+.auth-form input::placeholder {
+  color: rgba(203, 213, 225, 0.9);
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 64px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.compact-row {
+  margin-top: -2px;
+}
+
+.checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+
+.checkbox-inline input {
+  width: auto;
+  min-height: auto;
+  accent-color: var(--primary);
+}
+
+.text-link {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0 18px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  display: block;
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+
+.auth-actions {
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 980px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid,
+  .stats-grid.four-up,
+  .content-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .topnav {
+    width: 100%;
+  }
+
+  .top-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .top-actions > * {
+    flex: 1;
+  }
+
+  .stats-grid,
+  .stats-grid.four-up,
+  .content-row {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-shell {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .brand-group {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .topbar {
+    padding: 16px 18px;
+  }
+
+  .sidebar-panel,
+  .panel,
+  .auth-panel {
+    padding: 18px;
+  }
+}
