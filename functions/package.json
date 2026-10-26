@@ -1,0 +1,276 @@
+import * as admin from 'firebase-admin';
+import * as functions from 'firebase-functions';
+
+admin.initializeApp();
+
+const db = admin.firestore();
+
+function requireAuthenticated(context) {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'Authentication is required to perform this action.'
+    );
+  }
+}
+
+async function getUserRole(uid) {
+  const userDoc = await db.collection('users').doc(uid).get();
+  if (!userDoc.exists) {
+    return null;
+  }
+
+  return userDoc.data()?.role || 'student';
+}
+
+async function isAdminUser(uid) {
+  const role = await getUserRole(uid);
+  return role === 'admin';
+}
+
+export const onUserCreated = functions.auth.user().onCreate(async (user) => {
+  const userRef = db.collection('users').doc(user.uid);
+
+  await userRef.set(
+    {
+      uid: user.uid,
+      email: user.email || null,
+      displayName: user.displayName || null,
+      role: 'student',
+      status: 'pending_approval',
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  return { uid: user.uid, status: 'pending_approval' };
+});
+
+export const createUserProfile = functions.https.onCall(async (data, context) => {
+  requireAuthenticated(context);
+
+  const uid = context.auth.uid;
+  const profile = data?.profile || {};
+
+  if (!profile.studentId && !profile.matricNumber) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'A valid student or matric number is required.'
+    );
+  }
+
+  const payload = {
+    uid,
+    email: context.auth.token.email || null,
+    displayName: profile.displayName || null,
+    matricNumber: profile.matricNumber || null,
+    faculty: profile.faculty || null,
+    department: profile.department || null,
+    level: profile.level || null,
+    status: 'pending_approval',
+    role: 'student',
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    profileCompletedAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await db.collection('users').doc(uid).set(payload, { merge: true });
+
+  return { ok: true, uid };
+});
+
+export const approveStudent = functions.https.onCall(async (data, context) => {
+  requireAuthenticated(context);
+
+  const targetUid = data?.uid;
+  if (!targetUid || typeof targetUid !== 'string') {
+    throw new functions.https.HttpsError('invalid-argument', 'A valid user id is required.');
+  }
+
+  if (!(await isAdminUser(context.auth.uid))) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      'Only administrators can approve student accounts.'
+    );
+  }
+
+  await db.collection('users').doc(targetUid).update({
+    status: 'approved',
+    approvedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { ok: true, uid: targetUid, status: 'approved' };
+});
+
+export const createPrivateRoom = functions.https.onCall(async (data, context) => {
+  requireAuthenticated(context);
+
+  const roomName = String(data?.roomName || 'Private room').trim();
+  const hostId = context.auth.uid;
+
+  if (!(await isAdminUser(hostId)) && !(await getUserRole(hostId) === 'student')) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      'Only approved students can create private rooms.'
+    );
+  }
+
+  const userDoc = await db.collection('users').doc(hostId).get();
+  if (!userDoc.exists || userDoc.data()?.status !== 'approved') {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'Only approved users may create private rooms.'
+    );
+  }
+
+  const roomCode = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const roomRef = db.collection('privateRooms').doc();
+
+  await roomRef.set({
+    id: roomRef.id,
+    roomName,
+    roomCode,
+    hostId,
+    members: [hostId],
+    status: 'lobby',
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return {
+    ok: true,
+    roomId: roomRef.id,
+    roomCode,
+  };
+});
+
+export const submitMatchResult = functions.https.onCall(async (data, context) => {
+  requireAuthenticated(context);
+
+  const matchId = data?.matchId;
+  const winnerId = data?.winnerId;
+  const score = data?.score;
+
+  if (!matchId || !winnerId || !score) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'matchId, winnerId, and score are required.'
+    );
+  }
+
+  const matchRef = db.collection('matches').doc(matchId);
+  const matchDoc = await matchRef.get();
+
+  if (!matchDoc.exists) {
+    throw new functions.https.HttpsError('not-found', 'The match was not found.');
+  }
+
+  const matchData = matchDoc.data();
+  const participantIds = matchData?.participants || [];
+
+  if (!participantIds.includes(context.auth.uid) && !(await isAdminUser(context.auth.uid))) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      'You are not permitted to submit this result.'
+    );
+  }
+
+  if (!participantIds.includes(winnerId)) {
+    throw new functions.https.HttpsError('invalid-argument', 'Winner must be a participant in the match.');
+  }
+
+  const payload = {
+    status: 'completed',
+    winnerId,
+    score,
+    verifiedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await matchRef.update(payload);
+
+  return {
+    ok: true,
+    matchId,
+    winnerId,
+    status: 'completed',
+  };
+});
+
+export const recalculateLeaderboard = functions.https.onCall(async (_, context) => {
+  requireAuthenticated(context);
+
+  if (!(await isAdminUser(context.auth.uid))) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      'Only administrators can recalculate the leaderboard.'
+    );
+  }
+
+  const usersSnapshot = await db.collection('users').where('status', '==', 'approved').get();
+  const leaderboard = usersSnapshot.docs
+    .map((doc) => ({
+      uid: doc.id,
+      ...doc.data(),
+      rating: Number(doc.data()?.rating || 0),
+    }))
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 50);
+
+  const snapshotRef = db.collection('leaderboardSnapshots').doc();
+  await snapshotRef.set({
+    season: 'current',
+    entries: leaderboard,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { ok: true, count: leaderboard.length, snapshotId: snapshotRef.id };
+});
+
+export const issueReward = functions.https.onCall(async (data, context) => {
+  requireAuthenticated(context);
+
+  if (!(await isAdminUser(context.auth.uid))) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      'Only administrators can issue competitive rewards.'
+    );
+  }
+
+  const userId = data?.uid;
+  const rewardType = data?.rewardType || 'badge';
+  const amount = Number(data?.amount || 0);
+
+  if (!userId || !Number.isFinite(amount)) {
+    throw new functions.https.HttpsError('invalid-argument', 'A valid user and numeric reward amount are required.');
+  }
+
+  const rewardRef = db.collection('rewards').doc();
+  await rewardRef.set({
+    userId,
+    rewardType,
+    amount,
+    status: 'issued',
+    issuedAt: admin.firestore.FieldValue.serverTimestamp(),
+    issuedBy: context.auth.uid,
+  });
+
+  return { ok: true, rewardId: rewardRef.id };
+});
+
+export const onDailyLeaderboardRefresh = functions.pubsub.schedule('0 0 * * *').onRun(async () => {
+  const usersSnapshot = await db.collection('users').where('status', '==', 'approved').get();
+  const entries = usersSnapshot.docs
+    .map((doc) => ({ uid: doc.id, ...doc.data(), rating: Number(doc.data()?.rating || 0) }))
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 50);
+
+  await db.collection('leaderboardSnapshots').doc('daily').set({
+    season: 'daily',
+    entries,
+    generatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  return { ok: true, count: entries.length };
+});

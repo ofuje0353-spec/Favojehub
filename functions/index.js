@@ -1,11 +1,67 @@
-import { initAppShell, initAuthHandlers, initDashboard } from './auth.js';
-import { ThemeManager } from './theme-manager.js';
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
-const themeManager = new ThemeManager();
-themeManager.initialize();
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
 
-window.addEventListener('DOMContentLoaded', () => {
-  initAuthHandlers();
-  initDashboard();
-  initAppShell();
-});
+    function isApprovedUser() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow delete: if false;
+    }
+
+    match /matches/{matchId} {
+      allow read: if isSignedIn();
+      allow create: if isApprovedUser();
+      allow update: if isAdmin() || (isSignedIn() && resource.data.participants.hasAny([request.auth.uid]));
+      allow delete: if false;
+    }
+
+    match /tournaments/{tournamentId} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /privateRooms/{roomId} {
+      allow read: if isSignedIn();
+      allow create: if isApprovedUser();
+      allow update: if isAdmin() || (isSignedIn() && resource.data.hostId == request.auth.uid);
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.hostId == request.auth.uid);
+    }
+
+    match /voiceReports/{reportId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.reporterId == request.auth.uid);
+      allow create: if isApprovedUser();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /leaderboardSnapshots/{snapshotId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /rewards/{rewardId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+  }
+}
